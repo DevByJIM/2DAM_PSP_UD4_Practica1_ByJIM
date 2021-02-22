@@ -1,5 +1,6 @@
 package ejercicio;
 
+
 import java.io.File;
 
 import javax.swing.*;
@@ -13,41 +14,64 @@ public class PanelArchivos implements TreeExpansionListener{
 	    
 	    private JTree jTree1;
 	    private DefaultTreeModel modelo;
+	    private String[] Origenes;
 
 	    public DefaultTreeModel getModelo() {
 	        return modelo;
 	    }
 
-	    public PanelArchivos() {
-	    }
 
 	    public PanelArchivos(JTree jTree1) {
 	        this.jTree1 = jTree1;
+	        
 	    }
 
+	    public void setOrigen(String[] origenes) {
+	    	this.Origenes = origenes;
+	    }
 	    public void setJTree(JTree jTree1) {
 	        this.jTree1 = jTree1;
 	    }
 
 	    /**
-	     * Metodo que permite enlazar los escuchas de eventos 
-	     * y permite actualizar 
+	     * Metodo que permite enlazar los escuchas de eventos y permite actualizar 
 	     */
-	    public void init() {
-	        //creamos el nodo principal
-	        DefaultMutableTreeNode top = new DefaultMutableTreeNode("Directorio");
-	        //creamos un modelo con el nodo que creamos principal
-	        modelo = new DefaultTreeModel(top);
-	        // seteamos el modelo y el escucha al componente 
-	        jTree1.setModel(modelo);
-	        jTree1.addTreeExpansionListener(this);
-	        //extraemos todas las unidades disponibles en caso que tengamos C, D o otra
-	        for (File f : File.listRoots()) {
-	            DefaultMutableTreeNode raiz = new DefaultMutableTreeNode(f);
-	            //añadimos el nodo a la raiz
-	            top.add(raiz);
-	            //hacemos un recorrido de dos niveles a partir de cada una unidad
-	            actualizaNodo(raiz, f);     
+	    public void iniciar(int modo) {
+	        
+	        if(modo == 1) {
+	        	//creamos el nodo principal
+		        DefaultMutableTreeNode top = new DefaultMutableTreeNode("Mi PC:");
+		        //creamos un modelo con el nodo que creamos principal
+		        modelo = new DefaultTreeModel(top);
+		        // seteamos el modelo y el escucha al componente 
+		        jTree1.setModel(modelo);
+		        jTree1.addTreeExpansionListener(this);
+		        //extraemos todas las unidades disponibles en caso que tengamos C, D o otra
+	        	for (File f : File.listRoots()) {
+	        		DefaultMutableTreeNode raiz = new DefaultMutableTreeNode(f);
+	        		//añadimos el nodo a la raiz
+	        		top.add(raiz);
+	        		//hacemos un recorrido de dos niveles a partir de cada una unidad
+	        		actualizaNodo(raiz, f);     
+	        	}
+	        }else {
+	        	//creamos el nodo principal
+		        DefaultMutableTreeNode top = new DefaultMutableTreeNode("FTP:");
+		        //creamos un modelo con el nodo que creamos principal
+		        modelo = new DefaultTreeModel(top);
+		        // seteamos el modelo y el escucha al componente 
+		        jTree1.setModel(modelo);
+		        jTree1.addTreeExpansionListener(this);
+		        if(Origenes == null)return;
+		        //extraemos todas las unidades disponibles en caso que tengamos C, D o otra
+	        	for (String archivo : Origenes) {
+	        		File f = new File(archivo);
+	        		DefaultMutableTreeNode raiz = new DefaultMutableTreeNode(f);
+	        		//añadimos el nodo a la raiz
+	        		top.add(raiz);
+	        		//hacemos un recorrido de dos niveles a partir de cada una unidad
+	        		actualizaNodo(raiz, f);     
+	        	}
 	        }
 	    }
 
@@ -72,7 +96,7 @@ public class PanelArchivos implements TreeExpansionListener{
 	       {   
 	           for(File file: files)  // recorre todos los archivos 
 	           {
-	               DefaultMutableTreeNode nuevo = new DefaultMutableTreeNode(file);
+	               DefaultMutableTreeNode nuevo = new DefaultMutableTreeNode(file);	               
 	               //vuelve a mandar en caso que sea directorio 
 	               actualizaNodo(nuevo, file,profundidad-1); 
 	               nodo.add(nuevo); //crea el nodo
@@ -99,5 +123,6 @@ public class PanelArchivos implements TreeExpansionListener{
 
 	    @Override
 	    public void treeCollapsed(TreeExpansionEvent event) { }
+
 
 	}

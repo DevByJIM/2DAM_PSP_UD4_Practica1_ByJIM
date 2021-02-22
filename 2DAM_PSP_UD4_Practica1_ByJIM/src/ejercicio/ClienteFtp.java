@@ -60,6 +60,14 @@ public class ClienteFtp {
 		}
 	}
 	
+	public String[] Archivos() {
+		try {
+			return cliente.listNames();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	
 	
