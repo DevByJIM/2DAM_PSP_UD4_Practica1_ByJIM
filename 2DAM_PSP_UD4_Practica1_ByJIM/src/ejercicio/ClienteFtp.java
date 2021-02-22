@@ -15,8 +15,11 @@ public class ClienteFtp {
 	
 	
 	
-	public ClienteFtp() {
-		
+	public ClienteFtp(String user, char[] pass) {
+//		this.user = user;
+//		this.pass = String.valueOf(pass);
+		this.user = "Jim";
+		this.pass = "byjim";
 	}
 	
 	public String Conectar() {
@@ -26,7 +29,7 @@ public class ClienteFtp {
 			if(cliente.login(user, pass)) {
 				return cliente.getReplyString();
 			}
-			cliente.disconnect();
+			//cliente.disconnect();
 			return cliente.getReplyString();
 				
 			
