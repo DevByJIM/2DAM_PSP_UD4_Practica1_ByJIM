@@ -126,6 +126,7 @@ public class Interfaz extends JFrame implements ActionListener{
 				JScrollPane scrollServidor = new JScrollPane(FolderServidor);
 				scrollServidor.setBounds(570, 130, 400, 350);
 				
+				
 				arbolServidor = new PanelArchivos(FolderServidor);
 				arbolServidor.setOrigen(cliente.Archivos());
 				arbolServidor.iniciar(0);
@@ -146,6 +147,7 @@ public class Interfaz extends JFrame implements ActionListener{
 				});		
 		
 		panel.add(scrollServidor);
+		
 	}
 	
 	
@@ -154,6 +156,7 @@ public class Interfaz extends JFrame implements ActionListener{
 		if(e.getSource().equals(btnMakeDir)) {
 			cliente.crearDirectorio("Nueva Carpeta");
 			crearArbolServidor();
+
 		}else if(e.getSource().equals(btnErase)) {
 		
 		}else if(e.getSource().equals(btnSubir)) {

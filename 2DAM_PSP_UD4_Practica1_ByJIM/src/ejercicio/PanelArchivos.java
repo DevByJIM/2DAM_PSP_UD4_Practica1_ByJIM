@@ -23,13 +23,13 @@ public class PanelArchivos implements TreeExpansionListener{
 
 
 	    public PanelArchivos(JTree jTree1) {
-	        this.jTree1 = jTree1;
-	        
+	        this.jTree1 = jTree1;	        
 	    }
 
 	    public void setOrigen(String[] origenes) {
 	    	this.Origenes = origenes;
 	    }
+	    
 	    public void setJTree(JTree jTree1) {
 	        this.jTree1 = jTree1;
 	    }
@@ -65,8 +65,6 @@ public class PanelArchivos implements TreeExpansionListener{
 		        jTree1.setModel(modelo);
 		        jTree1.addTreeExpansionListener(this);
 		        if(Origenes == null)return;
-
-
 		        
 	        for (String f : Origenes) {
 	        	
@@ -100,6 +98,7 @@ public class PanelArchivos implements TreeExpansionListener{
 	               //vuelve a mandar en caso que sea directorio 
 	               actualizaNodo(nuevo, file,profundidad-1); 
 	               nodo.add(nuevo); 
+	              
 	           }
 	       }
 	       return true; 
