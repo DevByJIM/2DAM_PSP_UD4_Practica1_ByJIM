@@ -1,5 +1,11 @@
 package ejercicio;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.SocketException;
 
@@ -57,6 +63,80 @@ public class ClienteFtp {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return "";
+		}
+	}
+	
+	public boolean crearDirectorio(String path) {
+		try {
+			return cliente.makeDirectory(path);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean eliminarDirectorio(String path) {
+		try {
+			return cliente.removeDirectory(path);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean eliminarArchivo(String path) {
+		try {
+			return cliente.deleteFile(path);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean subirArchivo(String path) {		
+		try {		
+			BufferedInputStream inSt = new BufferedInputStream(new FileInputStream(path));
+			if(cliente.storeFile(path, inSt)) {
+				inSt.close();
+				return true;
+			}
+			
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return false;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean bajarArchivo(String path) {
+		try {		
+			BufferedOutputStream outSt = new BufferedOutputStream(new FileOutputStream(path));
+			if(cliente.retrieveFile(path, outSt)) {
+				outSt.close();
+				return true;
+			}
+			
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return false;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	
+	
+	public File RaizFtp() {
+		try {
+			return new File(cliente.getRemoteAddress().toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 	

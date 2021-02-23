@@ -2,6 +2,8 @@ package ejercicio;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -9,7 +11,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-public class Interfaz extends JFrame{
+public class Interfaz extends JFrame implements ActionListener{
 	/**
 	 * 
 	 */
@@ -61,17 +63,28 @@ public class Interfaz extends JFrame{
 		txtServidor = new JTextField();
 		txtServidor.setBounds(570, 100, 400, 25);
 		
+		btnMakeDir = new JButton("NEW DIR");
+		btnMakeDir.setBounds(445, 150, 110, 50);
+		btnMakeDir.addActionListener(this);
+		
+		btnErase = new JButton("DELETE");
+		btnErase.setBounds(445, 210, 110, 50);
+		btnErase.addActionListener(this);
+		
 		btnSubir = new JButton("SUBIR");
-		btnSubir.setBounds(445, 170, 110, 120);
+		btnSubir.setBounds(445, 290, 110, 50);
+		btnSubir.addActionListener(this);
 		
 		btnBajar = new JButton("BAJAR");
-		btnBajar.setBounds(445, 320, 110, 120);
-		
+		btnBajar.setBounds(445, 350, 110, 50);
+		btnBajar.addActionListener(this);
 
 
 		panel.add(txtDiario);
 		panel.add(txtLocal);
 		panel.add(txtServidor);
+		panel.add(btnMakeDir);
+		panel.add(btnErase);
 		panel.add(btnSubir);
 		panel.add(btnBajar);
 		panel.add(lbTitulo);
@@ -109,6 +122,7 @@ public class Interfaz extends JFrame{
 	private void crearArbolServidor() {
 		//PARTE QUE CREA EL ARBOL DE ARCHIVOS DEL SERVIDOR .....................
 				FolderServidor = new JTree();
+				FolderServidor.removeAll();
 				JScrollPane scrollServidor = new JScrollPane(FolderServidor);
 				scrollServidor.setBounds(570, 130, 400, 350);
 				
@@ -134,6 +148,22 @@ public class Interfaz extends JFrame{
 		panel.add(scrollServidor);
 	}
 	
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource().equals(btnMakeDir)) {
+			cliente.crearDirectorio("Nueva Carpeta");
+			crearArbolServidor();
+		}else if(e.getSource().equals(btnErase)) {
+		
+		}else if(e.getSource().equals(btnSubir)) {
+			
+		}else if(e.getSource().equals(btnBajar)) {
+			
+		}
+		
+	}
+	
 	Font fuenteTitulo= new Font("CAMBRIA",Font.BOLD,48);
 	Font fuenteLogo = new Font("Segoe UI",Font.BOLD,18);
 	Font fuentePizarra = new Font("Segoe UI",Font.PLAIN,16);
@@ -142,6 +172,8 @@ public class Interfaz extends JFrame{
 	private JLabel lbTitulo;
 	private JLabel lbLogo;
 	private JPanel panel;
+	private JButton btnMakeDir;
+	private JButton btnErase;
 	private JButton btnSubir;
 	private JButton btnBajar;
 	private JTextField txtLocal;
@@ -151,4 +183,6 @@ public class Interfaz extends JFrame{
 	private PanelArchivos arbolServidor;
 	private JTree FolderServidor;
 	private JTextArea txtDiario;
+
+
 }

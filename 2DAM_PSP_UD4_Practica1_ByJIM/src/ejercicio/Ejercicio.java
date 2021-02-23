@@ -14,7 +14,7 @@ public class Ejercicio{
 		JFrame frame = new JFrame("Servidor FTP ByJIM®2021");
 		frame.setBounds(550, 400, 330, 160);
 		frame.setResizable(false);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
 
 		miPanel panel = new miPanel();
 		frame.add(panel);
@@ -24,7 +24,7 @@ public class Ejercicio{
 
 }
 
-	class miPanel extends JPanel implements ActionListener{
+class miPanel extends JPanel implements ActionListener{
 		
 		/**
 		 * 
@@ -67,11 +67,11 @@ public class Ejercicio{
 		if(e.getSource().equals(btnOk)) {
 		
 			new Interfaz(txtUser.getText(),txtPass.getPassword());
-
+			
 		}else {
 			System.exit(0);
 		}
-		
+
 	}
 		
 		

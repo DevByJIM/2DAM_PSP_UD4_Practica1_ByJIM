@@ -10,6 +10,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
+
 public class PanelArchivos implements TreeExpansionListener{
 	    
 	    private JTree jTree1;
@@ -49,10 +50,11 @@ public class PanelArchivos implements TreeExpansionListener{
 		        //extraemos todas las unidades disponibles en caso que tengamos C, D o otra
 	        	for (File f : File.listRoots()) {
 	        		DefaultMutableTreeNode raiz = new DefaultMutableTreeNode(f);
-	        		//añadimos el nodo a la raiz
+	        		if(f.getPath().equals("C:\\")) {
 	        		top.add(raiz);
 	        		//hacemos un recorrido de dos niveles a partir de cada una unidad
-	        		actualizaNodo(raiz, f);     
+	        		actualizaNodo(raiz, f); 
+	        		}
 	        	}
 	        }else {
 	        	//creamos el nodo principal
@@ -63,15 +65,20 @@ public class PanelArchivos implements TreeExpansionListener{
 		        jTree1.setModel(modelo);
 		        jTree1.addTreeExpansionListener(this);
 		        if(Origenes == null)return;
-		        //extraemos todas las unidades disponibles en caso que tengamos C, D o otra
-	        	for (String archivo : Origenes) {
-	        		File f = new File(archivo);
-	        		DefaultMutableTreeNode raiz = new DefaultMutableTreeNode(f);
-	        		//añadimos el nodo a la raiz
+
+
+		        
+	        for (String f : Origenes) {
+	        	
+		        	File fila = new File(f);
+	        		DefaultMutableTreeNode raiz = new DefaultMutableTreeNode(fila);
+	        		
 	        		top.add(raiz);
 	        		//hacemos un recorrido de dos niveles a partir de cada una unidad
-	        		actualizaNodo(raiz, f);     
+	        		actualizaNodo(raiz, fila); 
+	        		
 	        	}
+	        	
 	        }
 	    }
 
@@ -81,33 +88,23 @@ public class PanelArchivos implements TreeExpansionListener{
 	        //recursivamente mandamos actualizar
 	        return actualizaNodo(nodo,f,2); 
 	    }
-	    
-	    /**
-	     * A partir de un nodo enlista los archivos y los agrega como nodo 
-	     * @param nodo Es el nodo que tenemos parcialmente como raiz
-	     * @param f es el archivo que se enlaza con la raiz 
-	     * @param profundidad el numero de subdirectorios que se quiere que escarbe
-	     * @return 
-	     */
+
 
 	    private boolean actualizaNodo(DefaultMutableTreeNode nodo, File f, int profundidad) {
-	       File[] files = f.listFiles(); // de el nodo que llega listamos todos sus archivos
-	       if(files!=null && profundidad>0) //permite detener la recursividad si ya llego al limite 
+	       File[] files = f.listFiles(); 
+	       if(files!=null && profundidad>0) 
 	       {   
-	           for(File file: files)  // recorre todos los archivos 
+	           for(File file: files) 
 	           {
 	               DefaultMutableTreeNode nuevo = new DefaultMutableTreeNode(file);	               
 	               //vuelve a mandar en caso que sea directorio 
 	               actualizaNodo(nuevo, file,profundidad-1); 
-	               nodo.add(nuevo); //crea el nodo
+	               nodo.add(nuevo); 
 	           }
 	       }
 	       return true; 
 	    }
-	    /**
-	     * Metodo que se ejecuta al expandir alguno de los nodos
-	     * @param event 
-	     */
+
 	    @Override
 	    public void treeExpanded(TreeExpansionEvent event) {
 	        TreePath path = event.getPath(); // Se obtiene el path del nodo
