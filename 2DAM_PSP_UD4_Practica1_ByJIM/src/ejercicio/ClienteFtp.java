@@ -7,9 +7,17 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.ConnectException;
 import java.net.SocketException;
+import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.net.ftp.FTPClient;
+
+import org.apache.commons.net.ftp.FTPFile;
 
 
 public class ClienteFtp {
@@ -39,6 +47,9 @@ public class ClienteFtp {
 			return cliente.getReplyString();
 				
 			
+		} catch (ConnectException e) {
+			JOptionPane.showMessageDialog(null, "El servidor esta apagado.");
+			return "No Conectado";
 		} catch (SocketException e) {
 			e.printStackTrace();
 			return cliente.getReplyString();
@@ -63,6 +74,15 @@ public class ClienteFtp {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return "";
+		}
+	}
+	
+	public File RaizActual() {
+		try {
+			return new File(cliente.printWorkingDirectory());
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 	
@@ -129,7 +149,26 @@ public class ClienteFtp {
 		return false;
 	}
 	
-	
+	public ArrayList<File> DameFiles() {
+		try {
+			
+			ArrayList<File> archivos = new ArrayList<File>();
+			
+			for(FTPFile ftpfile: cliente.listFiles()) {
+				
+				InputStream iStream=cliente.retrieveFileStream(ftpfile.getName());
+				File file = new File(ftpfile.getName());
+				FileUtils.copyInputStreamToFile(iStream, file);
+				archivos.add(file);
+			}
+			return archivos;
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
 	public File RaizFtp() {
 		try {

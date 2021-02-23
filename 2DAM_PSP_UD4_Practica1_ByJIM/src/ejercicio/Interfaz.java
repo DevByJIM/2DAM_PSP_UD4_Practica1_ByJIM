@@ -4,12 +4,16 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+
+import org.apache.commons.net.ftp.FTPFile;
 
 public class Interfaz extends JFrame implements ActionListener{
 	/**
@@ -19,7 +23,12 @@ public class Interfaz extends JFrame implements ActionListener{
 	ClienteFtp cliente;
 
 	public Interfaz(String user, char[] pass) {
-		cliente = new ClienteFtp(user, pass);
+		try{
+			cliente = new ClienteFtp(user, pass);
+		}catch(Exception ex) {
+			JOptionPane.showMessageDialog(null, "El servidor esta apagado.");
+			
+		}
 
 		if(cliente.Conectar().toString().contains("530")) {
 			JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrecta");
@@ -98,7 +107,7 @@ public class Interfaz extends JFrame implements ActionListener{
 		JScrollPane scrollLocal = new JScrollPane(FolderLocal);
 		scrollLocal.setBounds(30, 130, 400, 350);
 		
-		arbolLocal = new PanelArchivos(FolderLocal);
+		arbolLocal = new PanelArchivos(FolderLocal,cliente);
 		arbolLocal.iniciar(1);
 		
 		FolderLocal.addTreeSelectionListener(new TreeSelectionListener() {
@@ -125,10 +134,10 @@ public class Interfaz extends JFrame implements ActionListener{
 				FolderServidor.removeAll();
 				JScrollPane scrollServidor = new JScrollPane(FolderServidor);
 				scrollServidor.setBounds(570, 130, 400, 350);
+				scrollServidor.revalidate();
 				
-				
-				arbolServidor = new PanelArchivos(FolderServidor);
-				arbolServidor.setOrigen(cliente.Archivos());
+				arbolServidor = new PanelArchivos(FolderServidor,cliente);				
+				arbolServidor.setOrigen(cliente.DameFiles());
 				arbolServidor.iniciar(0);
 
 				FolderServidor.addTreeSelectionListener(new TreeSelectionListener() {

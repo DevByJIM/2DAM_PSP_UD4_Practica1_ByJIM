@@ -2,6 +2,7 @@ package ejercicio;
 
 
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.event.TreeExpansionEvent;
@@ -15,19 +16,23 @@ public class PanelArchivos implements TreeExpansionListener{
 	    
 	    private JTree jTree1;
 	    private DefaultTreeModel modelo;
-	    private String[] Origenes;
+	    private ArrayList<File> Origenes;
+	    private ClienteFtp cliente;
+	    private String modo= "LOCAL";
 
 	    public DefaultTreeModel getModelo() {
 	        return modelo;
 	    }
 
 
-	    public PanelArchivos(JTree jTree1) {
-	        this.jTree1 = jTree1;	        
+	    public PanelArchivos(JTree jTree1, ClienteFtp cliente) {
+	        this.jTree1 = jTree1;	
+	        this.cliente = cliente;
 	    }
 
-	    public void setOrigen(String[] origenes) {
+	    public void setOrigen(ArrayList<File>  origenes) {
 	    	this.Origenes = origenes;
+	    	modo= "FTP";
 	    }
 	    
 	    public void setJTree(JTree jTree1) {
@@ -50,30 +55,27 @@ public class PanelArchivos implements TreeExpansionListener{
 		        //extraemos todas las unidades disponibles en caso que tengamos C, D o otra
 	        	for (File f : File.listRoots()) {
 	        		DefaultMutableTreeNode raiz = new DefaultMutableTreeNode(f);
-	        		if(f.getPath().equals("C:\\")) {
+	        		//if(f.getPath().equals("C:\\")) {
 	        		top.add(raiz);
 	        		//hacemos un recorrido de dos niveles a partir de cada una unidad
 	        		actualizaNodo(raiz, f); 
-	        		}
+	        		//}
 	        	}
 	        }else {
-	        	//creamos el nodo principal
+
 		        DefaultMutableTreeNode top = new DefaultMutableTreeNode("FTP:");
-		        //creamos un modelo con el nodo que creamos principal
+
 		        modelo = new DefaultTreeModel(top);
-		        // seteamos el modelo y el escucha al componente 
 		        jTree1.setModel(modelo);
 		        jTree1.addTreeExpansionListener(this);
 		        if(Origenes == null)return;
 		        
-	        for (String f : Origenes) {
-	        	
-		        	File fila = new File(f);
-	        		DefaultMutableTreeNode raiz = new DefaultMutableTreeNode(fila);
-	        		
+	        for (File f : cliente.DameFiles()) {	        	
+	        		DefaultMutableTreeNode raiz = new DefaultMutableTreeNode(f);
+	        		System.out.println("-o->" + Origenes);
 	        		top.add(raiz);
-	        		//hacemos un recorrido de dos niveles a partir de cada una unidad
-	        		actualizaNodo(raiz, fila); 
+
+	        		actualizaNodo(raiz, f); 
 	        		
 	        	}
 	        	
@@ -81,11 +83,11 @@ public class PanelArchivos implements TreeExpansionListener{
 	    }
 
 	    private boolean actualizaNodo(DefaultMutableTreeNode nodo, File f) {
-	        //quitamos lo que tenga el nodo 
 	        nodo.removeAllChildren();
-	        //recursivamente mandamos actualizar
 	        return actualizaNodo(nodo,f,2); 
 	    }
+	    
+	    
 
 
 	    private boolean actualizaNodo(DefaultMutableTreeNode nodo, File f, int profundidad) {
@@ -99,6 +101,7 @@ public class PanelArchivos implements TreeExpansionListener{
 	               actualizaNodo(nuevo, file,profundidad-1); 
 	               nodo.add(nuevo); 
 	              
+	               
 	           }
 	       }
 	       return true; 
@@ -106,15 +109,27 @@ public class PanelArchivos implements TreeExpansionListener{
 
 	    @Override
 	    public void treeExpanded(TreeExpansionEvent event) {
-	        TreePath path = event.getPath(); // Se obtiene el path del nodo
-	        DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
-	        // verifica que sea nodo valido
-	        if(node==null || !(node.getUserObject() instanceof File) ) return; 
-	        File f = (File) node.getUserObject();
-	        actualizaNodo(node, f);  //actualiza la estructura
-	        JTree tree = ( JTree) event.getSource(); 
-	        DefaultTreeModel model = (DefaultTreeModel)tree.getModel(); 
-	        model.nodeStructureChanged(node);
+	    	if(modo=="LOCAL"){
+	    		TreePath path = event.getPath(); // Se obtiene el path del nodo
+	    		DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
+	    		// verifica que sea nodo valido
+	    		if(node==null || !(node.getUserObject() instanceof File) ) return; 
+	    		File f = (File) node.getUserObject();
+	    		actualizaNodo(node, f);  //actualiza la estructura
+	    		JTree tree = ( JTree) event.getSource(); 
+	    		DefaultTreeModel model = (DefaultTreeModel)tree.getModel(); 
+	    		model.nodeStructureChanged(node);
+	    	}else {
+	    		TreePath path = event.getPath(); // Se obtiene el path del nodo
+	    		DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
+	    		// verifica que sea nodo valido
+	    		if(node==null || !(node.getUserObject() instanceof File) ) return; 
+	    		File f = (File) node.getUserObject();
+	    		actualizaNodo(node, f);  //actualiza la estructura
+	    		JTree tree = ( JTree) event.getSource(); 
+	    		DefaultTreeModel model = (DefaultTreeModel)tree.getModel(); 
+	    		model.nodeStructureChanged(node);
+	    	}
 	    }
 
 	    @Override
