@@ -170,6 +170,29 @@ public class ClienteFtp {
 		}
 	}
 	
+	public ArrayList<File> DameFiles(String Path) {
+		try {
+
+			ArrayList<File> archivos = new ArrayList<File>();
+
+				for(FTPFile ftpfile: cliente.listFiles(Path)) {
+
+					InputStream iStream=cliente.retrieveFileStream(ftpfile.getName());
+					File file = new File(ftpfile.getName());
+					FileUtils.copyInputStreamToFile(iStream, file);
+					archivos.add(file);
+				}
+			
+				return archivos;
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	
 	public File RaizFtp() {
 		try {
 			return new File(cliente.getRemoteAddress().toString());

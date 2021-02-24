@@ -5,7 +5,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -13,7 +12,6 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import org.apache.commons.net.ftp.FTPFile;
 
 public class Interfaz extends JFrame implements ActionListener{
 	/**
@@ -36,6 +34,14 @@ public class Interfaz extends JFrame implements ActionListener{
 		};
 		
 		System.out.println(cliente.DirActual());
+
+//		for(File file: cliente.DameFiles("Carpeta1")) 
+//		{
+//			System.out.println("@@ " + file.toString());
+//		}
+		
+		
+		
 		
 		crearComponentes();
 		crearArbolLocal();
@@ -136,9 +142,7 @@ public class Interfaz extends JFrame implements ActionListener{
 				scrollServidor.setBounds(570, 130, 400, 350);
 				scrollServidor.revalidate();
 				
-				arbolServidor = new PanelArchivos(FolderServidor,cliente);				
-				arbolServidor.setOrigen(cliente.DameFiles());
-				arbolServidor.iniciar(0);
+				arbolServidor = new JTreeFtp(FolderServidor,cliente);												
 
 				FolderServidor.addTreeSelectionListener(new TreeSelectionListener() {
 					
@@ -149,6 +153,10 @@ public class Interfaz extends JFrame implements ActionListener{
 						
 						DefaultMutableTreeNode ultimoNodo = 
 							(DefaultMutableTreeNode)nodos[nodos.length-1];
+						
+						System.out.println(cliente.DameFiles("Carpeta1").size());
+						
+						//arbolServidor.cargarNodos(ultimoNodo,cliente.DameFiles(ultimoNodo.toString()));
 						
 						System.out.println("-->" + ultimoNodo.toString());
 						txtServidor.setText(ultimoNodo.toString());
@@ -192,7 +200,7 @@ public class Interfaz extends JFrame implements ActionListener{
 	private JTextField txtServidor;
 	private JTree FolderLocal;
 	private PanelArchivos arbolLocal;
-	private PanelArchivos arbolServidor;
+	private JTreeFtp arbolServidor;
 	private JTree FolderServidor;
 	private JTextArea txtDiario;
 
