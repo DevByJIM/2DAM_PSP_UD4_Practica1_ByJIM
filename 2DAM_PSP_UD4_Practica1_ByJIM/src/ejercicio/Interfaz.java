@@ -33,15 +33,20 @@ public class Interfaz extends JFrame implements ActionListener{
 			System.exit(0);
 		};
 		
-		System.out.println(cliente.DirActual());
+		System.out.println(cliente.RaizActual());
 
+		
+		
 //		for(File file: cliente.DameFiles("Carpeta1")) 
 //		{
 //			System.out.println("@@ " + file.toString());
 //		}
-		
-		
-		
+//		
+//		for(File file: cliente.DameFiles("Carpeta1")) 
+//		{
+//			System.out.println("@@ " + file.toString());
+//		}
+		System.out.println(cliente.RaizActual());
 		
 		crearComponentes();
 		crearArbolLocal();
@@ -155,7 +160,7 @@ public class Interfaz extends JFrame implements ActionListener{
 							(DefaultMutableTreeNode)nodos[nodos.length-1];
 						
 						System.out.println(cliente.DameFiles("Carpeta1").size());
-						
+
 						//arbolServidor.cargarNodos(ultimoNodo,cliente.DameFiles(ultimoNodo.toString()));
 						
 						System.out.println("-->" + ultimoNodo.toString());

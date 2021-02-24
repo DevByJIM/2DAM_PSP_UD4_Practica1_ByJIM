@@ -27,7 +27,7 @@ public class ClienteFtp {
 	String user =  "Jim";
 	String pass = "byjim";
 	
-	
+	public ClienteFtp() {};
 	
 	public ClienteFtp(String user, char[] pass) {
 //		this.user = user;
@@ -161,10 +161,11 @@ public class ClienteFtp {
 				FileUtils.copyInputStreamToFile(iStream, file);
 				archivos.add(file);
 			}
+			System.out.println(cliente.printWorkingDirectory());
 			return archivos;
 			
 
-		} catch (Exception e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -175,7 +176,7 @@ public class ClienteFtp {
 
 			ArrayList<File> archivos = new ArrayList<File>();
 
-				for(FTPFile ftpfile: cliente.listFiles(Path)) {
+				for(FTPFile ftpfile: cliente.listFiles(cliente.printWorkingDirectory() + "/"+Path)) {
 
 					InputStream iStream=cliente.retrieveFileStream(ftpfile.getName());
 					File file = new File(ftpfile.getName());
