@@ -12,6 +12,8 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import org.apache.commons.net.ftp.FTPFile;
+
 
 public class Interfaz extends JFrame implements ActionListener{
 	/**
@@ -32,21 +34,6 @@ public class Interfaz extends JFrame implements ActionListener{
 			JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrecta");
 			System.exit(0);
 		};
-		
-		System.out.println(cliente.RaizActual());
-
-		
-		
-//		for(File file: cliente.DameFiles("Carpeta1")) 
-//		{
-//			System.out.println("@@ " + file.toString());
-//		}
-//		
-//		for(File file: cliente.DameFiles("Carpeta1")) 
-//		{
-//			System.out.println("@@ " + file.toString());
-//		}
-		System.out.println(cliente.RaizActual());
 		
 		crearComponentes();
 		crearArbolLocal();
@@ -158,13 +145,8 @@ public class Interfaz extends JFrame implements ActionListener{
 						
 						DefaultMutableTreeNode ultimoNodo = 
 							(DefaultMutableTreeNode)nodos[nodos.length-1];
-						
-						System.out.println(cliente.DameFiles("Carpeta1").size());
 
-						//arbolServidor.cargarNodos(ultimoNodo,cliente.DameFiles(ultimoNodo.toString()));
-						
-						System.out.println("-->" + ultimoNodo.toString());
-						txtServidor.setText(ultimoNodo.toString());
+						txtServidor.setText(ultimoNodo.getRoot().toString());
 					}
 				});		
 		
@@ -180,7 +162,7 @@ public class Interfaz extends JFrame implements ActionListener{
 			crearArbolServidor();
 
 		}else if(e.getSource().equals(btnErase)) {
-		
+
 		}else if(e.getSource().equals(btnSubir)) {
 			
 		}else if(e.getSource().equals(btnBajar)) {

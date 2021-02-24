@@ -10,6 +10,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
+import org.apache.commons.net.ftp.FTPFile;
+
 public class JTreeFtp implements TreeExpansionListener{
 
 	private JTree jTree;
@@ -35,67 +37,72 @@ public class JTreeFtp implements TreeExpansionListener{
 
     	jTree.setModel(modelo);
     	jTree.addTreeExpansionListener(this);
+    	
 
-    	for (File f : cliente.DameFiles()) {
-    		DefaultMutableTreeNode raiz = new DefaultMutableTreeNode(f);
-    		
+    	for (FTPFile f : cliente.getArchivos()) {
+    		DefaultMutableTreeNode raiz = new DefaultMutableTreeNode(f.getName());
     		top.add(raiz);
-    		//actualizaNodo(raiz, f);   		
+    		if(f.isDirectory()) 
+    			raiz.add(new DefaultMutableTreeNode("null"));
+    		
+    		actualizaNodo(raiz,f);
     	}
     }
     
     
     
-//    private boolean actualizaNodo(DefaultMutableTreeNode nodo, File f) {
-//        nodo.removeAllChildren();
-//        System.out.println("1--------->>" + nodo.toString());
-//        return actualizaNodo(nodo,f,2); 
-//    }
-//    
-    public boolean cargarNodos(DefaultMutableTreeNode nodo,ArrayList<File> archivos) {
-    	System.out.println(archivos.size());
-    	for(File file: archivos) 
+    private boolean actualizaNodo(DefaultMutableTreeNode nodo, FTPFile f) {
+        nodo.removeAllChildren();
+        System.out.println("1--------->>" + nodo.toString());
+        return actualizaNodo(nodo,f,2); 
+    }
+    
+
+
+    private boolean actualizaNodo(DefaultMutableTreeNode nodo, FTPFile f, int profundidad) {
+    	String miNodo = nodo.toString();
+    	for(FTPFile file: cliente.getArchivos(nodo.toString())) 
     	{
-    		System.out.println("@11@ " + file.toString());
-    		DefaultMutableTreeNode nuevo = new DefaultMutableTreeNode(file);	               
-    		nodo.add(nuevo); 
+    		System.out.println("@11@ " + file.getName());
+    		DefaultMutableTreeNode nuevo = new DefaultMutableTreeNode(file.getName());	               
+
+    		actualizaNodo(nuevo, file,profundidad-1); 
+    		nodo.add(nuevo);
+    		if(file.isDirectory()) 
+    			nodo.add(new DefaultMutableTreeNode("null"));
     	}
 
     	return true; 
     }
-//
-//    private boolean actualizaNodo(DefaultMutableTreeNode nodo, File f, int profundidad) {
-//
-////    	for(File file: cliente.DameFiles("Carpeta1")) 
-////    	{
-////
-////    		System.out.println("@11@ " + file.toString());
-////    		DefaultMutableTreeNode nuevo = new DefaultMutableTreeNode(file);	               
-////
-////    		actualizaNodo(nuevo, file,profundidad-1); 
-////    		nodo.add(nuevo); 
-////    	}
-//
-//    	return true; 
-//    }
 
     
     
     //EVENTOS DEL JTREE----------------------------------------------------------
 	@Override
-	public void treeCollapsed(TreeExpansionEvent event) {
-		
-		System.out.println("$$$$$$$ " + event.getSource());
+	public void treeExpanded(TreeExpansionEvent event) {
 		System.out.println(event.getPath());
-	
+		TreePath path = event.getPath(); // Se obtiene el path del nodo
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
+
+		for (FTPFile f : cliente.getArchivos(event.getPath().toString())) {
+			
+    		DefaultMutableTreeNode raiz = new DefaultMutableTreeNode(f.getName());
+
+    		node.add(raiz);
+    		if(f.isDirectory()) {
+    			node.add(new DefaultMutableTreeNode("null"));
+    		}
+    		actualizaNodo(raiz, f);   		
+    	}
+		
+		
+	}
+
+    @Override
+	public void treeCollapsed(TreeExpansionEvent event) {
 			
 	}
-
-
-
-	@Override
-	public void treeExpanded(TreeExpansionEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
 }
+
+
+

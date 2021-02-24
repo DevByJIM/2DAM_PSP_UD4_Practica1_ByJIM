@@ -2,6 +2,8 @@ package ejercicio;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -155,17 +157,17 @@ public class ClienteFtp {
 			ArrayList<File> archivos = new ArrayList<File>();
 			
 			for(FTPFile ftpfile: cliente.listFiles()) {
-				
-				InputStream iStream=cliente.retrieveFileStream(ftpfile.getName());
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+				cliente.retrieveFile(ftpfile.getName(), outputStream);
+				InputStream iStream=new ByteArrayInputStream(outputStream.toByteArray());
 				File file = new File(ftpfile.getName());
 				FileUtils.copyInputStreamToFile(iStream, file);
 				archivos.add(file);
 			}
-			System.out.println(cliente.printWorkingDirectory());
 			return archivos;
 			
 
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -175,15 +177,21 @@ public class ClienteFtp {
 		try {
 
 			ArrayList<File> archivos = new ArrayList<File>();
-
-				for(FTPFile ftpfile: cliente.listFiles(cliente.printWorkingDirectory() + "/"+Path)) {
-
-					InputStream iStream=cliente.retrieveFileStream(ftpfile.getName());
+				
+				
+				if(!Path.equals("FTP:"))
+				for(FTPFile ftpfile: cliente.listFiles(this.DirActual() + Path)) {
+					
+					ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+					cliente.retrieveFile(ftpfile.getName(), outputStream);
+					InputStream iStream=new ByteArrayInputStream(outputStream.toByteArray());
+							
 					File file = new File(ftpfile.getName());
 					FileUtils.copyInputStreamToFile(iStream, file);
 					archivos.add(file);
 				}
-			
+				
+				System.out.println(cliente.getReplyString());
 				return archivos;
 
 
@@ -192,7 +200,31 @@ public class ClienteFtp {
 			return null;
 		}
 	}
+		
 
+	
+	
+	
+	public FTPFile[] getArchivos() {
+		
+		try {
+			return cliente.listFiles();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+
+	public FTPFile[] getArchivos(String path) {
+		
+		try {
+			return cliente.listFiles(path);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
 	public File RaizFtp() {
 		try {
