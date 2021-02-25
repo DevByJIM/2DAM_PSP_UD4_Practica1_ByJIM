@@ -38,7 +38,7 @@ public class JTreeFtp implements TreeExpansionListener{
     	jTree.setModel(modelo);
     	jTree.addTreeExpansionListener(this);
     	
-
+ 
     	for (FTPFile f : cliente.getArchivos()) {
     		DefaultMutableTreeNode raiz = new DefaultMutableTreeNode(f.getName());
     		top.add(raiz);
@@ -48,28 +48,30 @@ public class JTreeFtp implements TreeExpansionListener{
     		actualizaNodo(raiz,f);
     	}
     }
-    
-    
-    
+        
     private boolean actualizaNodo(DefaultMutableTreeNode nodo, FTPFile f) {
         nodo.removeAllChildren();
         System.out.println("1--------->>" + nodo.toString());
         return actualizaNodo(nodo,f,2); 
     }
-    
-
 
     private boolean actualizaNodo(DefaultMutableTreeNode nodo, FTPFile f, int profundidad) {
-    	String miNodo = nodo.toString();
-    	for(FTPFile file: cliente.getArchivos(nodo.toString())) 
-    	{
-    		System.out.println("@11@ " + file.getName());
-    		DefaultMutableTreeNode nuevo = new DefaultMutableTreeNode(file.getName());	               
 
-    		actualizaNodo(nuevo, file,profundidad-1); 
-    		nodo.add(nuevo);
-    		if(file.isDirectory()) 
-    			nodo.add(new DefaultMutableTreeNode("null"));
+    	for(FTPFile file: cliente.getArchivos(nodo)) 
+    	{
+    		if(file!=null && profundidad>0) 
+    		{     			
+    			//System.out.println("@11@ " + file.getName());
+    			DefaultMutableTreeNode nuevo = new DefaultMutableTreeNode(file.getName());	               
+    			nodo.add(nuevo);
+    			if(file.isDirectory()) 
+    				nodo.add(new DefaultMutableTreeNode("null"));
+    			
+    			actualizaNodo(nuevo, file, profundidad-1); 
+
+    			//nodo.add(nuevo);
+
+    		}
     	}
 
     	return true; 
@@ -84,7 +86,7 @@ public class JTreeFtp implements TreeExpansionListener{
 		TreePath path = event.getPath(); // Se obtiene el path del nodo
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
 
-		for (FTPFile f : cliente.getArchivos(event.getPath().toString())) {
+		for (FTPFile f : cliente.getArchivos(node)) {
 			
     		DefaultMutableTreeNode raiz = new DefaultMutableTreeNode(f.getName());
 

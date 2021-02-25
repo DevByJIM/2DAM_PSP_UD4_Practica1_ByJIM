@@ -15,6 +15,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.net.ftp.FTPClient;
@@ -201,9 +202,6 @@ public class ClienteFtp {
 		}
 	}
 		
-
-	
-	
 	
 	public FTPFile[] getArchivos() {
 		
@@ -216,15 +214,31 @@ public class ClienteFtp {
 	}
 	
 
-	public FTPFile[] getArchivos(String path) {
+	public FTPFile[] getArchivos(DefaultMutableTreeNode node) {
 		
 		try {
-			return cliente.listFiles(path);
+			return cliente.listFiles(damePathCompleto(node));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
+	
+	private String damePathCompleto(DefaultMutableTreeNode node) {
+		String ruta= "/" + node.toString();
+		DefaultMutableTreeNode padre = (DefaultMutableTreeNode) node.getParent();
+		
+		if(padre!=null) {
+			ruta = damePathCompleto(padre) + ruta;
+		}else {
+			return "";
+		}
+		System.out.println("RUTACOMPLETA" + ruta);
+		return ruta;
+		
+	}
+	
+	
 	
 	public File RaizFtp() {
 		try {
