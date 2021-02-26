@@ -116,11 +116,14 @@ public class ClienteFtp {
 		}
 	}
 	
-	public boolean subirArchivo(String path) {		
+	public boolean subirArchivo(File pathLocal, String pathRemoto) {		
 		try {		
-			BufferedInputStream inSt = new BufferedInputStream(new FileInputStream(path));
-			if(cliente.storeFile(path, inSt)) {
+			BufferedInputStream inSt = new BufferedInputStream(new FileInputStream(pathLocal));
+			cliente.changeWorkingDirectory(pathRemoto);
+			
+			if(cliente.storeFile(pathLocal.getName(), inSt)) {
 				inSt.close();
+				cliente.changeWorkingDirectory("/");
 				return true;
 			}
 			
@@ -134,10 +137,11 @@ public class ClienteFtp {
 		return false;
 	}
 
-	public boolean bajarArchivo(String path) {
+	public boolean bajarArchivo(File pathLocal, String pathRemoto) {
 		try {		
-			BufferedOutputStream outSt = new BufferedOutputStream(new FileOutputStream(path));
-			if(cliente.retrieveFile(path, outSt)) {
+			BufferedOutputStream outSt = new BufferedOutputStream(new FileOutputStream(pathLocal));
+			cliente.changeWorkingDirectory(pathRemoto);
+			if(cliente.retrieveFile(pathRemoto, outSt)) {
 				outSt.close();
 				return true;
 			}
@@ -224,7 +228,7 @@ public class ClienteFtp {
 		}
 	}
 	
-	private String damePathCompleto(DefaultMutableTreeNode node) {
+	public String damePathCompleto(DefaultMutableTreeNode node) {
 		String ruta= "/" + node.toString();
 		DefaultMutableTreeNode padre = (DefaultMutableTreeNode) node.getParent();
 		

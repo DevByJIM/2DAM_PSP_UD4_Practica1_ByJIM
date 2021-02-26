@@ -45,59 +45,43 @@ public class JTreeFtp implements TreeExpansionListener{
     		if(f.isDirectory()) 
     			raiz.add(new DefaultMutableTreeNode("null"));
     		
-    		actualizaNodo(raiz,f);
-    	}
-    }
-        
-    private boolean actualizaNodo(DefaultMutableTreeNode nodo, FTPFile f) {
-        nodo.removeAllChildren();
-        System.out.println("1--------->>" + nodo.toString());
-        return actualizaNodo(nodo,f,2); 
-    }
-
-    private boolean actualizaNodo(DefaultMutableTreeNode nodo, FTPFile f, int profundidad) {
-
-    	for(FTPFile file: cliente.getArchivos(nodo)) 
-    	{
-    		if(file!=null && profundidad>0) 
-    		{     			
-    			//System.out.println("@11@ " + file.getName());
-    			DefaultMutableTreeNode nuevo = new DefaultMutableTreeNode(file.getName());	               
-    			nodo.add(nuevo);
-    			if(file.isDirectory()) 
-    				nodo.add(new DefaultMutableTreeNode("null"));
-    			
-    			actualizaNodo(nuevo, file, profundidad-1); 
-
-    			//nodo.add(nuevo);
-
+    		//actualizaNodo(raiz,f);
+   	}
+ }
+     
+    public void actualizarJtree(DefaultMutableTreeNode node) {
+    	node.removeAllChildren();
+		for (FTPFile f : cliente.getArchivos(node)) {
+    		DefaultMutableTreeNode raiz = new DefaultMutableTreeNode(f.getName());
+    		
+    		node.add(raiz);
+    		if(f.isDirectory()) {
+    			raiz.add(new DefaultMutableTreeNode("null"));
     		}
-    	}
-
-    	return true; 
+    		
+    		this.modelo.nodeChanged(node);
+    		this.modelo.reload(node);		
+    	}	
     }
-
-    
     
     //EVENTOS DEL JTREE----------------------------------------------------------
 	@Override
 	public void treeExpanded(TreeExpansionEvent event) {
 		System.out.println(event.getPath());
-		TreePath path = event.getPath(); // Se obtiene el path del nodo
+		TreePath path = event.getPath(); 
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
-
+		node.removeAllChildren();
 		for (FTPFile f : cliente.getArchivos(node)) {
-			
     		DefaultMutableTreeNode raiz = new DefaultMutableTreeNode(f.getName());
-
+    		
     		node.add(raiz);
     		if(f.isDirectory()) {
-    			node.add(new DefaultMutableTreeNode("null"));
+    			raiz.add(new DefaultMutableTreeNode("null"));
     		}
-    		actualizaNodo(raiz, f);   		
-    	}
-		
-		
+    		
+    		this.modelo.nodeChanged(node);
+    		this.modelo.reload(node);		
+    	}			
 	}
 
     @Override

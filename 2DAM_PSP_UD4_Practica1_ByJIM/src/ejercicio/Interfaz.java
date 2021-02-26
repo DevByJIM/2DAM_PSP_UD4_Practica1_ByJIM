@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -143,7 +144,7 @@ public class Interfaz extends JFrame implements ActionListener{
 						DefaultMutableTreeNode ultimoNodo = 
 							(DefaultMutableTreeNode)nodos[nodos.length-1];
 
-						txtServidor.setText(ultimoNodo.getRoot().toString());
+						txtServidor.setText(cliente.damePathCompleto(ultimoNodo));
 					}
 				});		
 		
@@ -161,7 +162,8 @@ public class Interfaz extends JFrame implements ActionListener{
 		}else if(e.getSource().equals(btnErase)) {
 
 		}else if(e.getSource().equals(btnSubir)) {
-			
+			cliente.subirArchivo(new File(txtLocal.getText()), txtServidor.getText());
+			//arbolServidor.actualizarJtree(new DefaultMutableTreeNode(txtServidor.getText()));
 		}else if(e.getSource().equals(btnBajar)) {
 			
 		}
