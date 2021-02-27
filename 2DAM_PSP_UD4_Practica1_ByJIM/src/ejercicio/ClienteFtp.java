@@ -32,9 +32,10 @@ public class ClienteFtp {
 	
 	public ClienteFtp() {};
 	
-	public ClienteFtp(String user, char[] pass) {
+	public ClienteFtp(String host, String user, char[] pass) {
 //		this.user = user;
 //		this.pass = String.valueOf(pass);
+		this.host = "localhost";
 		this.user = "Jim";
 		this.pass = "byjim";
 	}

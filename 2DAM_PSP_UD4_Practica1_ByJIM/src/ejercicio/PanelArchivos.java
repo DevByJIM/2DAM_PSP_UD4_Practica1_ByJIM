@@ -18,7 +18,6 @@ public class PanelArchivos implements TreeExpansionListener{
 	    private DefaultTreeModel modelo;
 	    private ArrayList<File> Origenes;
 	    private ClienteFtp cliente;
-	    private String modo= "LOCAL";
 
 	    public DefaultTreeModel getModelo() {
 	        return modelo;
@@ -32,7 +31,7 @@ public class PanelArchivos implements TreeExpansionListener{
 
 	    public void setOrigen(ArrayList<File>  origenes) {
 	    	this.Origenes = origenes;
-	    	modo= "FTP";
+	    	
 	    }
 	    
 	    public void setJTree(JTree jTree1) {
@@ -44,7 +43,7 @@ public class PanelArchivos implements TreeExpansionListener{
 	     */
 	    public void iniciar(int modo) {
 	        
-	        if(modo == 1) {
+
 	        	//creamos el nodo principal
 		        DefaultMutableTreeNode top = new DefaultMutableTreeNode("Mi PC:");
 		        //creamos un modelo con el nodo que creamos principal
@@ -60,24 +59,8 @@ public class PanelArchivos implements TreeExpansionListener{
 	        		//hacemos un recorrido de dos niveles a partir de cada una unidad
 	        		actualizaNodo(raiz, f); 
 	        		//}
-	        	}
-	        }else {
+	        	
 
-		        DefaultMutableTreeNode top = new DefaultMutableTreeNode("FTP:");
-
-		        modelo = new DefaultTreeModel(top);
-		        jTree1.setModel(modelo);
-		        jTree1.addTreeExpansionListener(this);
-		        if(Origenes == null)return;
-		        
-		        for (File f : cliente.DameFiles()) {	        	
-		        	DefaultMutableTreeNode raiz = new DefaultMutableTreeNode(f);
-		        	System.out.println("-o->" + Origenes);
-		        	top.add(raiz);
-		        	if(f.getPath().equals("C\\")) {
-		        		actualizaNodo(raiz, f); 
-		        	}
-		        }
 	        	
 	        }
 	    }

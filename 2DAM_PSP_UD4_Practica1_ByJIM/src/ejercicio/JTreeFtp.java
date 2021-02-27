@@ -24,6 +24,7 @@ public class JTreeFtp implements TreeExpansionListener{
     	
         this.jTree = jTree;	
         this.cliente = cliente;
+
         iniciar();
 
     }
@@ -34,11 +35,11 @@ public class JTreeFtp implements TreeExpansionListener{
 
     	DefaultMutableTreeNode top = new DefaultMutableTreeNode("FTP:");
     	modelo = new DefaultTreeModel(top);
-
+    	
     	jTree.setModel(modelo);
     	jTree.addTreeExpansionListener(this);
     	
- 
+
     	for (FTPFile f : cliente.getArchivos()) {
     		DefaultMutableTreeNode raiz = new DefaultMutableTreeNode(f.getName());
     		top.add(raiz);
@@ -56,7 +57,7 @@ public class JTreeFtp implements TreeExpansionListener{
     		
     		node.add(raiz);
     		if(f.isDirectory()) {
-    			raiz.add(new DefaultMutableTreeNode("null"));
+    			raiz.add(new DefaultMutableTreeNode("vacía"));
     		}
     		
     		this.modelo.nodeChanged(node);
@@ -76,7 +77,7 @@ public class JTreeFtp implements TreeExpansionListener{
     		
     		node.add(raiz);
     		if(f.isDirectory()) {
-    			raiz.add(new DefaultMutableTreeNode("null"));
+    			raiz.add(new DefaultMutableTreeNode("vacía"));
     		}
     		
     		this.modelo.nodeChanged(node);

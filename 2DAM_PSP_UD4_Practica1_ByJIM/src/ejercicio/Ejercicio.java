@@ -11,15 +11,17 @@ public class Ejercicio{
 
 	public static void main(String[] args) {
 		
-		JFrame frame = new JFrame("Servidor FTP ByJIM®2021");
-		frame.setBounds(550, 400, 330, 160);
-		frame.setResizable(false);
-
-
-		miPanel panel = new miPanel();
-		frame.add(panel);
-
-		frame.setVisible(true);
+		new Interfaz();
+		
+//		JFrame frame = new JFrame("Servidor FTP ByJIM®2021");
+//		frame.setBounds(550, 400, 330, 160);
+//		frame.setResizable(false);
+//
+//
+//		miPanel panel = new miPanel();
+//		frame.add(panel);
+//
+//		frame.setVisible(true);
 	}
 
 }
@@ -65,8 +67,8 @@ class miPanel extends JPanel implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource().equals(btnOk)) {
-		
-			new Interfaz(txtUser.getText(),txtPass.getPassword());
+			this.setVisible(false);
+			//new Interfaz(txtUser.getText(),txtPass.getPassword());
 			
 		}else {
 			System.exit(0);

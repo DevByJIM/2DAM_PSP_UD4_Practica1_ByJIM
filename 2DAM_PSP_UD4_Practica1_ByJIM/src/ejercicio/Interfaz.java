@@ -19,10 +19,34 @@ public class Interfaz extends JFrame implements ActionListener{
 	 */
 	private static final long serialVersionUID = 1L;
 	ClienteFtp cliente;
+	Boolean Conectado = false;
+	String servidor; 
+	String user = "JIM";
+	char[] pass = null;
 
+	public Interfaz() {
+		Iniciar();
+	}
+	
 	public Interfaz(String user, char[] pass) {
+		this.user = user;
+		this.pass = pass;
+		Iniciar();
+	}
+	
+	private void Iniciar() {
+		
+			 		
+		crearComponentes();
+		crearArbolLocal();
+		crearArbolServidor();
+		
+		this.setVisible(true);
+	}
+	
+	private void ConectarServer() {
 		try{
-			cliente = new ClienteFtp(user, pass);
+			cliente = new ClienteFtp(servidor,user, pass);
 		}catch(Exception ex) {
 			JOptionPane.showMessageDialog(null, "El servidor esta apagado.");
 			
@@ -32,20 +56,16 @@ public class Interfaz extends JFrame implements ActionListener{
 			JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrecta");
 			System.exit(0);
 		};
-		
-		crearComponentes();
-		crearArbolLocal();
-		crearArbolServidor();
-		
-		this.setVisible(true);
 	}
+	
+	
 	
 	private void crearComponentes() {
 		this.setBounds(200, 200, 1020, 730);
         this.setResizable(false);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
 		panel = new JPanel();
-		panel.setBackground(Color.BLUE);
+		panel.setBackground(COLOR_FONDO);
 		panel.setLayout(null);
 		this.add(panel);
 		
@@ -68,26 +88,35 @@ public class Interfaz extends JFrame implements ActionListener{
 		txtServidor = new JTextField();
 		txtServidor.setBounds(570, 100, 400, 25);
 		
-		btnMakeDir = new JButton("NEW DIR");
-		btnMakeDir.setBounds(445, 150, 110, 50);
-		btnMakeDir.addActionListener(this);
-		
-		btnErase = new JButton("DELETE");
-		btnErase.setBounds(445, 210, 110, 50);
-		btnErase.addActionListener(this);
+		btnConectar = new JButton("CONECTAR");
+		btnConectar.setBounds(445, 130, 110, 50);
+		btnConectar.addActionListener(this);
 		
 		btnSubir = new JButton("SUBIR");
-		btnSubir.setBounds(445, 290, 110, 50);
+		btnSubir.setBounds(445, 210, 110, 50);
+		btnSubir.setEnabled(false);
 		btnSubir.addActionListener(this);
 		
 		btnBajar = new JButton("BAJAR");
-		btnBajar.setBounds(445, 350, 110, 50);
+		btnBajar.setBounds(445, 270, 110, 50);
+		btnBajar.setEnabled(false);
 		btnBajar.addActionListener(this);
-
+		
+		btnMakeDir = new JButton("NEW DIR");
+		btnMakeDir.setBounds(445, 350, 110, 50);
+		btnMakeDir.setEnabled(false);
+		btnMakeDir.addActionListener(this);
+		
+		btnErase = new JButton("DELETE");
+		btnErase.setBounds(445, 410, 110, 50);
+		btnErase.setEnabled(false);
+		btnErase.addActionListener(this);
+		
 
 		panel.add(txtDiario);
 		panel.add(txtLocal);
 		panel.add(txtServidor);
+		panel.add(btnConectar);
 		panel.add(btnMakeDir);
 		panel.add(btnErase);
 		panel.add(btnSubir);
@@ -127,28 +156,39 @@ public class Interfaz extends JFrame implements ActionListener{
 	private void crearArbolServidor() {
 		//PARTE QUE CREA EL ARBOL DE ARCHIVOS DEL SERVIDOR .....................
 				FolderServidor = new JTree();
-				FolderServidor.removeAll();
+				FolderServidor.removeAll();				
 				JScrollPane scrollServidor = new JScrollPane(FolderServidor);
 				scrollServidor.setBounds(570, 130, 400, 350);
 				scrollServidor.revalidate();
 				
-				arbolServidor = new JTreeFtp(FolderServidor,cliente);												
+				
+				if(Conectado) {
 
-				FolderServidor.addTreeSelectionListener(new TreeSelectionListener() {
-					
-					@Override
-					public void valueChanged(TreeSelectionEvent e) {
-						TreePath path = e.getPath();
-						Object[] nodos = path.getPath();
+					FolderServidor.setEnabled(true);
+					arbolServidor = new JTreeFtp(FolderServidor, cliente);
+					FolderServidor.addTreeSelectionListener(new TreeSelectionListener() {
 						
-						DefaultMutableTreeNode ultimoNodo = 
-							(DefaultMutableTreeNode)nodos[nodos.length-1];
+						@Override
+						public void valueChanged(TreeSelectionEvent e) {
+							TreePath path = e.getPath();
+							Object[] nodos = path.getPath();
+							System.out.println("asdsdHIOlasd");
+							DefaultMutableTreeNode ultimoNodo = 
+								(DefaultMutableTreeNode)nodos[nodos.length-1];
 
-						txtServidor.setText(cliente.damePathCompleto(ultimoNodo));
-					}
-				});		
-		
-		panel.add(scrollServidor);
+							txtServidor.setText(cliente.damePathCompleto(ultimoNodo));
+						}
+					});		
+					panel.add(scrollServidor);
+				}else {
+					FolderServidor.setEnabled(false);
+					System.out.println("as44444444444d");
+					JPanel panelin = new JPanel();
+					panelin.setBounds(570, 130, 400, 350);
+					panel.add(panelin);
+				}
+				
+
 		
 	}
 	
@@ -156,8 +196,10 @@ public class Interfaz extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource().equals(btnMakeDir)) {
-			cliente.crearDirectorio("Nueva Carpeta");
-			crearArbolServidor();
+			String nameCarpeta = JOptionPane.showInputDialog(null,"Nombre de la nueva carpeta",
+			        		"ByJIM®2021", JOptionPane.QUESTION_MESSAGE); 
+			cliente.crearDirectorio(nameCarpeta);
+			//crearArbolServidor();
 
 		}else if(e.getSource().equals(btnErase)) {
 
@@ -166,18 +208,50 @@ public class Interfaz extends JFrame implements ActionListener{
 			//arbolServidor.actualizarJtree(new DefaultMutableTreeNode(txtServidor.getText()));
 		}else if(e.getSource().equals(btnBajar)) {
 			
+		}else if(e.getSource().equals(btnConectar)) {
+			if(btnConectar.getText().equals("CONECTAR")) {
+
+				Login login = new Login();
+				Activadores(true);
+				this.servidor = login.getServer();
+				this.user = login.getUser();
+				this.pass = login.getPass();
+				System.out.println(Conectado);
+				btnConectar.setText("DisCONECT");				
+				ConectarServer();
+				crearArbolServidor();
+			}
+			else {
+				btnConectar.setText("CONECTAR");
+				Activadores(false);
+			}
+
 		}
 		
 	}
+	
+	private void Activadores(boolean valor) {
+		FolderServidor.setEnabled(valor);
+		this.Conectado = valor;
+		btnSubir.setEnabled(valor);
+		btnBajar.setEnabled(valor);
+		btnMakeDir.setEnabled(valor);
+		btnErase.setEnabled(valor);		
+	}
+	
+	
 	
 	Font fuenteTitulo= new Font("CAMBRIA",Font.BOLD,48);
 	Font fuenteLogo = new Font("Segoe UI",Font.BOLD,18);
 	Font fuentePizarra = new Font("Segoe UI",Font.PLAIN,16);
 	
+	public static final Color COLOR_FONDO = new Color(0,128,255);
+	
 
 	private JLabel lbTitulo;
 	private JLabel lbLogo;
 	private JPanel panel;
+	private JButton btnConectar;
 	private JButton btnMakeDir;
 	private JButton btnErase;
 	private JButton btnSubir;
