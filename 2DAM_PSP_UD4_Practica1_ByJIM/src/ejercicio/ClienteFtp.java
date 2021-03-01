@@ -92,7 +92,9 @@ public class ClienteFtp {
 	
 	public boolean crearDirectorio(String path) {
 		try {
-			return cliente.makeDirectory(path);
+			cliente.makeDirectory(path);
+			cliente.changeWorkingDirectory("/");
+			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -101,7 +103,23 @@ public class ClienteFtp {
 	
 	public boolean eliminarDirectorio(String path) {
 		try {
-			return cliente.removeDirectory(path);
+			FTPFile[] archivos = cliente.listFiles(path);
+			
+			if(archivos.length == 0) {
+				return cliente.removeDirectory(path);
+			}
+			
+			for(FTPFile file: archivos) {
+				if(file.isDirectory()) {
+					eliminarDirectorio(path + "/"+ file.getName());
+				}
+				eliminarArchivo(path + "/"+ file.getName());
+			}
+			cliente.removeDirectory(path);
+
+			cliente.changeWorkingDirectory("/");
+			return true;
+		
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -110,7 +128,9 @@ public class ClienteFtp {
 	
 	public boolean eliminarArchivo(String path) {
 		try {
-			return cliente.deleteFile(path);
+			cliente.deleteFile(path);
+			cliente.changeWorkingDirectory("/");
+			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -127,8 +147,7 @@ public class ClienteFtp {
 				cliente.changeWorkingDirectory("/");
 				return true;
 			}
-			
-			
+					
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return false;
@@ -138,16 +157,17 @@ public class ClienteFtp {
 		return false;
 	}
 
-	public boolean bajarArchivo(File pathLocal, String pathRemoto) {
-		try {		
-			BufferedOutputStream outSt = new BufferedOutputStream(new FileOutputStream(pathLocal));
-			cliente.changeWorkingDirectory(pathRemoto);
+	
+	public boolean bajarArchivo(String pathLocal, String pathRemoto) {
+		try {	
+			BufferedOutputStream outSt = new BufferedOutputStream(
+					new FileOutputStream(pathLocal + dameNombreArchivo(pathRemoto)));
+
 			if(cliente.retrieveFile(pathRemoto, outSt)) {
 				outSt.close();
 				return true;
 			}
-			
-			
+						
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return false;
@@ -156,6 +176,17 @@ public class ClienteFtp {
 		}
 		return false;
 	}
+	
+	
+	public String dameNombreArchivo(String pathRemoto) {
+		
+		int posicion = pathRemoto.lastIndexOf("/");
+		
+		return pathRemoto.substring(posicion);
+		
+	}
+	
+	
 	
 	public ArrayList<File> DameFiles() {
 		try {

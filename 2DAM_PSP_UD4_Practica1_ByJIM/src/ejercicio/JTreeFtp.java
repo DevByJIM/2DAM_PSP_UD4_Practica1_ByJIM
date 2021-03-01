@@ -1,8 +1,5 @@
 package ejercicio;
 
-import java.io.File;
-import java.util.ArrayList;
-
 import javax.swing.*;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
@@ -68,7 +65,6 @@ public class JTreeFtp implements TreeExpansionListener{
     //EVENTOS DEL JTREE----------------------------------------------------------
 	@Override
 	public void treeExpanded(TreeExpansionEvent event) {
-		System.out.println(event.getPath());
 		TreePath path = event.getPath(); 
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
 		node.removeAllChildren();

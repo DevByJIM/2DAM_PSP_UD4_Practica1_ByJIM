@@ -2,8 +2,6 @@ package ejercicio;
 
 
 import java.io.File;
-import java.util.ArrayList;
-
 import javax.swing.*;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
@@ -16,23 +14,18 @@ public class PanelArchivos implements TreeExpansionListener{
 	    
 	    private JTree jTree1;
 	    private DefaultTreeModel modelo;
-	    private ArrayList<File> Origenes;
-	    private ClienteFtp cliente;
+
 
 	    public DefaultTreeModel getModelo() {
 	        return modelo;
 	    }
 
 
-	    public PanelArchivos(JTree jTree1, ClienteFtp cliente) {
+	    public PanelArchivos(JTree jTree1) {
 	        this.jTree1 = jTree1;	
-	        this.cliente = cliente;
 	    }
 
-	    public void setOrigen(ArrayList<File>  origenes) {
-	    	this.Origenes = origenes;
-	    	
-	    }
+
 	    
 	    public void setJTree(JTree jTree1) {
 	        this.jTree1 = jTree1;

@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.time.LocalDate;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -94,11 +95,13 @@ public class Interfaz extends JFrame implements ActionListener{
 		
 		btnSubir = new JButton("SUBIR");
 		btnSubir.setBounds(445, 210, 110, 50);
+		btnSubir.setIcon(new ImageIcon("./Imagenes/flechaDch.png"));
 		btnSubir.setEnabled(false);
 		btnSubir.addActionListener(this);
 		
 		btnBajar = new JButton("BAJAR");
 		btnBajar.setBounds(445, 270, 110, 50);
+		btnBajar.setIcon(new ImageIcon("./Imagenes/flechaIzq.png"));
 		btnBajar.setEnabled(false);
 		btnBajar.addActionListener(this);
 		
@@ -132,7 +135,7 @@ public class Interfaz extends JFrame implements ActionListener{
 		JScrollPane scrollLocal = new JScrollPane(FolderLocal);
 		scrollLocal.setBounds(30, 130, 400, 350);
 		
-		arbolLocal = new PanelArchivos(FolderLocal,cliente);
+		arbolLocal = new PanelArchivos(FolderLocal);
 		arbolLocal.iniciar(1);
 		
 		FolderLocal.addTreeSelectionListener(new TreeSelectionListener() {
@@ -158,7 +161,7 @@ public class Interfaz extends JFrame implements ActionListener{
 				FolderServidor = new JTree();
 				FolderServidor.removeAll();				
 				JScrollPane scrollServidor = new JScrollPane(FolderServidor);
-				scrollServidor.setBounds(570, 130, 400, 350);
+				scrollServidor.setBounds(570, 130, 400, 300);
 				scrollServidor.revalidate();
 				
 				
@@ -182,9 +185,8 @@ public class Interfaz extends JFrame implements ActionListener{
 					panel.add(scrollServidor);
 				}else {
 					FolderServidor.setEnabled(false);
-					System.out.println("as44444444444d");
 					JPanel panelin = new JPanel();
-					panelin.setBounds(570, 130, 400, 350);
+					panelin.setBounds(570, 130, 400, 300);
 					panel.add(panelin);
 				}
 				
@@ -198,15 +200,34 @@ public class Interfaz extends JFrame implements ActionListener{
 		if(e.getSource().equals(btnMakeDir)) {
 			String nameCarpeta = JOptionPane.showInputDialog(null,"Nombre de la nueva carpeta",
 			        		"ByJIM®2021", JOptionPane.QUESTION_MESSAGE); 
-			cliente.crearDirectorio(nameCarpeta);
-			//crearArbolServidor();
+			if(cliente.crearDirectorio(txtServidor.getText() + "\\"+  nameCarpeta))
+				txtDiario.append("Se ha creado la carpeta " + txtServidor.getText() + "\\"+  nameCarpeta + " en el servidor FTP. " + LocalDate.now() + ".\n");
 
 		}else if(e.getSource().equals(btnErase)) {
+			String elemento = txtServidor.getText();
+			
+			if(elemento.substring(elemento.length()-4, elemento.length()-3).equals(".")){
+				
+				if(cliente.eliminarArchivo(elemento))
+					txtDiario.append("Se ha eliminado el archivo " + txtServidor.getText() + " en el servidor FTP. " + LocalDate.now() + ".\n");
+
+			}else {
+				
+				if(cliente.eliminarDirectorio(elemento))
+					txtDiario.append("Se ha eliminado el directorio " + txtServidor.getText() + " en el servidor FTP. " + LocalDate.now() + ".\n");
+			}
 
 		}else if(e.getSource().equals(btnSubir)) {
 			cliente.subirArchivo(new File(txtLocal.getText()), txtServidor.getText());
-			//arbolServidor.actualizarJtree(new DefaultMutableTreeNode(txtServidor.getText()));
+			arbolServidor.actualizarJtree(new DefaultMutableTreeNode(txtServidor.getText()));
+			
+			txtDiario.append("Se ha subido el archivo " + txtLocal.getText() + " en el servidor FTP. " + LocalDate.now() + ".\n");
+		
 		}else if(e.getSource().equals(btnBajar)) {
+			cliente.bajarArchivo(txtLocal.getText(), txtServidor.getText());
+			
+			txtDiario.append("Se ha bajado el archivo " + txtServidor.getText() + " del servidor FTP. " + LocalDate.now() + ".\n");
+
 			
 		}else if(e.getSource().equals(btnConectar)) {
 			if(btnConectar.getText().equals("CONECTAR")) {
@@ -220,13 +241,17 @@ public class Interfaz extends JFrame implements ActionListener{
 				btnConectar.setText("DisCONECT");				
 				ConectarServer();
 				crearArbolServidor();
+				txtDiario.append("Conectado al Servidor FTP: " + this.servidor + "." + LocalDate.now() + ".\n");
+				
 			}
 			else {
 				btnConectar.setText("CONECTAR");
+				txtDiario.append("Se ha desconectado del Servidor FTP: " + this.servidor + "." + LocalDate.now() + ".\n");
 				Activadores(false);
 			}
 
 		}
+		crearArbolServidor();
 		
 	}
 	
