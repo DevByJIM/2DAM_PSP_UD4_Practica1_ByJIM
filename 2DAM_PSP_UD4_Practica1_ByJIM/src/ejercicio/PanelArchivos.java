@@ -47,11 +47,11 @@ public class PanelArchivos implements TreeExpansionListener{
 		        //extraemos todas las unidades disponibles en caso que tengamos C, D o otra
 	        	for (File f : File.listRoots()) {
 	        		DefaultMutableTreeNode raiz = new DefaultMutableTreeNode(f);
-	        		//if(f.getPath().equals("C:\\")) {
+	        		if(f.getPath().equals("C:\\")) {
 	        		top.add(raiz);
 	        		//hacemos un recorrido de dos niveles a partir de cada una unidad
 	        		actualizaNodo(raiz, f); 
-	        		//}
+	        		}
 	        	
 
 	        	

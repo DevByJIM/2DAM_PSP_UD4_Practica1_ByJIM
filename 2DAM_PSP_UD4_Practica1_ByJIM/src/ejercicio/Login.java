@@ -84,7 +84,7 @@ class miPanel extends JPanel {
 public void actionPerformed(ActionEvent e) {
 	
 	if(e.getSource().equals(btnOk)) {
-		this.server = "asds";
+		this.server = "LOCALHOST";
 		this.user = txtUser.getText();
 		this.pass = txtPass.getPassword();
 		this.setVisible(false);
