@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import javax.swing.*;
@@ -194,10 +193,7 @@ public class Interfaz extends JFrame implements ActionListener{
 					JPanel panelin = new JPanel();
 					panelin.setBounds(570, 130, 400, 300);
 					panel.add(panelin);
-				}
-				
-
-		
+				}	
 	}
 	
 	
@@ -205,37 +201,58 @@ public class Interfaz extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		String Ahora = LocalDate.now() + ". " +  LocalTime.now();
 		if(e.getSource().equals(btnMakeDir)) {
-			String nameCarpeta = JOptionPane.showInputDialog(null,"Nombre de la nueva carpeta",
-			        		"ByJIM®2021", JOptionPane.QUESTION_MESSAGE); 
-			if(cliente.crearDirectorio(txtServidor.getText() + "\\"+  nameCarpeta))
-				txtDiario.append("Se ha creado la carpeta " + txtServidor.getText() + "\\"+  nameCarpeta + " en el servidor FTP. " + Ahora + ".\n");
-
+			if(ComprobarSiHayObjeto()) {
+				String nameCarpeta = JOptionPane.showInputDialog(null,"Nombre de la nueva carpeta",
+						"ByJIM®2021", JOptionPane.QUESTION_MESSAGE); 
+				if(cliente.crearDirectorio(txtServidor.getText() + "\\"+  nameCarpeta)) {
+					txtDiario.append("Se ha creado la carpeta " + txtServidor.getText() + "\\"+  nameCarpeta + " en el servidor FTP. " + Ahora + ".\n");
+					txtServidor.setText("");
+				}
+			}
 		}else if(e.getSource().equals(btnErase)) {
 			String elemento = txtServidor.getText();
-			
-			if(elemento.substring(elemento.length()-4, elemento.length()-3).equals(".")){
-				
-				if(cliente.eliminarArchivo(elemento))
-					txtDiario.append("Se ha eliminado el archivo " + txtServidor.getText() + " en el servidor FTP. " + Ahora + ".\n");
+			if(ComprobarSiHayObjeto()) {
+				if(elemento.substring(elemento.length()-4, elemento.length()-3).equals(".")){
+					int respuesta = JOptionPane.showConfirmDialog(null, "SE VA A ELIMINAR EL ARCHIVO. SEGURO?","Mensajes ByJIM®2021",JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+					if(respuesta == 0)
+						if(cliente.eliminarArchivo(elemento)) {
+							txtDiario.append("Se ha eliminado el archivo " + txtServidor.getText() + " en el servidor FTP. " + Ahora + ".\n");
+							txtServidor.setText("");
 
-			}else {
-				
-				if(cliente.eliminarDirectorio(elemento))
-					txtDiario.append("Se ha eliminado el directorio " + txtServidor.getText() + " en el servidor FTP. " + Ahora + ".\n");
+						}
+				}else {
+					int respuesta = JOptionPane.showConfirmDialog(null, "SE VA A ELIMINAR EL DIRECTORIO. SEGURO?","Mensajes ByJIM®2021",JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+					if(respuesta == 0)
+						if(cliente.eliminarDirectorio(elemento)) {
+							txtDiario.append("Se ha eliminado el directorio " + txtServidor.getText() + " en el servidor FTP. " + Ahora + ".\n");
+							txtServidor.setText("");
+						}
+				}
 			}
-
 		}else if(e.getSource().equals(btnSubir)) {
-			cliente.subirArchivo(new File(txtLocal.getText()), txtServidor.getText());
-			arbolServidor.actualizarJtree(new DefaultMutableTreeNode(txtServidor.getText()));
-			
-			txtDiario.append("Se ha subido el archivo " + txtLocal.getText() + " en el servidor FTP. " + Ahora + ".\n");
-		
-		}else if(e.getSource().equals(btnBajar)) {
-			cliente.bajarArchivo(txtLocal.getText(), txtServidor.getText());
-			
-			txtDiario.append("Se ha bajado el archivo " + txtServidor.getText() + " del servidor FTP. " + Ahora + ".\n");
 
-			
+			if(ComprobarMovimiento()) {
+				int respuesta = JOptionPane.showConfirmDialog(null, 
+						"Se va a subir el archivo " + txtLocal.getText() + " al servidor FTP.\nen " + txtServidor.getText(),
+						"Mensajes ByJIM®2021",JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				if(respuesta == 0) {
+					cliente.subirArchivo(new File(txtLocal.getText()), txtServidor.getText());
+					arbolServidor.actualizarJtree(new DefaultMutableTreeNode(txtServidor.getText()));
+					txtServidor.setText("");
+					txtDiario.append("Se ha subido el archivo " + txtLocal.getText() + " en el servidor FTP. " + Ahora + ".\n");
+				}
+			}
+		}else if(e.getSource().equals(btnBajar)) {
+			if(ComprobarMovimiento()) {
+				int respuesta = JOptionPane.showConfirmDialog(null, 
+						"Se va a bajar el archivo " + txtServidor.getText() + " del servidor FTP.\na " + txtServidor.getText(),
+						"Mensajes ByJIM®2021",JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				if(respuesta == 0) {
+					cliente.bajarArchivo(txtLocal.getText(), txtServidor.getText());
+					txtServidor.setText("");
+					txtDiario.append("Se ha bajado el archivo " + txtServidor.getText() + " del servidor FTP. " + Ahora + ".\n");
+				}
+			}
 		}else if(e.getSource().equals(btnConectar)) {
 			if(btnConectar.getText().equals("CONECTAR")) {
 
@@ -255,12 +272,34 @@ public class Interfaz extends JFrame implements ActionListener{
 				btnConectar.setText("CONECTAR");
 				txtDiario.append("Se ha desconectado del Servidor FTP: " + this.servidor + "." + Ahora + ".\n");
 				Activadores(false);
+				txtServidor.setText("");
 			}
 
 		}
 		crearArbolServidor();
-		
+			
 	}
+	
+	private boolean ComprobarSiHayObjeto() {
+		if(txtServidor.getText().equals("")) {
+			JOptionPane.showMessageDialog(null, 
+					"Necesitamos un objeto o ubicación para poder realizar la acción.",
+					"Mensajes ByJIM®2021",JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean ComprobarMovimiento() {
+		if(txtLocal.getText().equals("") || txtServidor.getText().equals("")) {
+			JOptionPane.showMessageDialog(null, 
+					"Necesitamos una dirección de origen y destino para realizar la transación.",
+					"Mensajes ByJIM®2021",JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		return true;
+	}
+	
 	
 	private void Activadores(boolean valor) {
 		FolderServidor.setEnabled(valor);

@@ -13,7 +13,6 @@ public class JTreeFtp implements TreeExpansionListener{
 
 	private JTree jTree;
     private DefaultTreeModel modelo;
-    //private ArrayList<File> Origenes;
     private ClienteFtp cliente;
     
     
