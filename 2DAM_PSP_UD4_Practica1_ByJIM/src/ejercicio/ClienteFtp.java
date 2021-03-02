@@ -33,33 +33,34 @@ public class ClienteFtp {
 	public ClienteFtp() {};
 	
 	public ClienteFtp(String host, String user, char[] pass) {
-//		this.user = user;
-//		this.pass = String.valueOf(pass);
-		this.host = "localhost";
-		this.user = "Jim";
-		this.pass = "byjim";
+		this.host = host;
+		this.user = user;
+		this.pass = String.valueOf(pass);
+//		this.host = "localhost";
+//		this.user = "Jim";
+//		this.pass = "byjim";
 	}
 	
-	public String Conectar() {
+	public int Conectar() {
 		try {
 			cliente.connect(host);
 			cliente.enterLocalPassiveMode();
 			if(cliente.login(user, pass)) {
-				return cliente.getReplyString();
+				return cliente.getReplyCode();
 			}
 			//cliente.disconnect();
-			return cliente.getReplyString();
+			return cliente.getReplyCode();
 				
 			
 		} catch (ConnectException e) {
 			JOptionPane.showMessageDialog(null, "El servidor esta apagado.");
-			return "No Conectado";
+			return 0;
 		} catch (SocketException e) {
 			e.printStackTrace();
-			return cliente.getReplyString();
+			return cliente.getReplyCode();
 		} catch (IOException e) {
 			e.printStackTrace();
-			return cliente.getReplyString();
+			return cliente.getReplyCode();
 		}
 	}
 	

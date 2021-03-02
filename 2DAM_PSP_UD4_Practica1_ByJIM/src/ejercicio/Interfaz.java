@@ -14,6 +14,8 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import org.apache.commons.net.ftp.FTPReply;
+
 
 public class Interfaz extends JFrame implements ActionListener{
 	/**
@@ -46,18 +48,20 @@ public class Interfaz extends JFrame implements ActionListener{
 		this.setVisible(true);
 	}
 	
-	private void ConectarServer() {
+	private boolean ConectarServer() {
 		try{
 			cliente = new ClienteFtp(servidor,user, pass);
+
 		}catch(Exception ex) {
 			JOptionPane.showMessageDialog(null, "El servidor esta apagado.");
-			
+			return false;
 		}
 
-		if(cliente.Conectar().toString().contains("530")) {
+		if(!FTPReply.isPositiveCompletion(cliente.Conectar())) {
 			JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrecta");
-			System.exit(0);
+			return false;
 		};
+		return true;
 	}
 	
 	
@@ -256,14 +260,13 @@ public class Interfaz extends JFrame implements ActionListener{
 		}else if(e.getSource().equals(btnConectar)) {
 			if(btnConectar.getText().equals("CONECTAR")) {
 
-				Login login = new Login();
-				Activadores(true);
+				Login login = new Login();			
 				this.servidor = login.getServer();
 				this.user = login.getUser();
-				this.pass = login.getPass();
-				System.out.println(Conectado);
-				btnConectar.setText("DisCONECT");				
-				ConectarServer();
+				this.pass = login.getPass();		
+				if(!ConectarServer()) return;
+				btnConectar.setText("DisCONECT");	
+				Activadores(true);
 				crearArbolServidor();
 				txtDiario.append("Conectado al Servidor FTP: " + this.servidor + "." + Ahora + ".\n");
 				
